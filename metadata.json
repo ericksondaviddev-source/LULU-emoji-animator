@@ -1,0 +1,6 @@
+{
+  "name": "Lulu Emoji Animator",
+  "description": "Crea y anima personajes emoji 2D/3D con texto personalizado, grabación de voz, fondos de galería y creador de fondos, listo para YouTube Shorts.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
