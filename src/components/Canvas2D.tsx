@@ -284,51 +284,6 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
         </div>
       )}
 
-      {/* Selected Shape HUD Indicator (Top-Left) */}
-      {selectedLayer && !isPlaying && (
-        <div className="absolute top-3 left-3 z-40 pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-zinc-950/90 text-zinc-100 border border-zinc-700/80 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="flex items-center gap-1.5 max-w-[130px] sm:max-w-[170px] truncate">
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-400/20 text-amber-400 uppercase tracking-tight">
-              {selectedLayer.category}
-            </span>
-            <span className="text-xs font-semibold truncate text-zinc-200" title={selectedLayer.name}>
-              {selectedLayer.name}
-            </span>
-          </div>
-
-          <div className="h-4 w-[1px] bg-zinc-700 mx-0.5" />
-
-          {onDuplicateLayer && (
-            <button
-              onClick={() => onDuplicateLayer(selectedLayer.id)}
-              className="p-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
-              title="Duplicar forma"
-            >
-              <Copy className="w-3.5 h-3.5" />
-            </button>
-          )}
-
-          {onDeleteLayer && (
-            <button
-              onClick={() => onDeleteLayer(selectedLayer.id)}
-              className="px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 active:scale-95 text-white font-bold text-[11px] flex items-center gap-1 shadow-md transition-all"
-              title="Borrar esta forma (o presiona Supr)"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Borrar</span>
-            </button>
-          )}
-
-          <button
-            onClick={() => onSelectLayer(null)}
-            className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors"
-            title="Deseleccionar"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
       {/* Layers Container (1080x1920 or 1080x1080 viewport mapping) */}
       <div
         className="relative w-full h-full pointer-events-auto"

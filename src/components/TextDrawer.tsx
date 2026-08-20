@@ -29,14 +29,14 @@ const FONT_OPTIONS = [
 ];
 
 const PRESET_TEXTS = [
-  { text: 'LULU ❤️', font: 'Fredoka, cursive, sans-serif', color: '#FF3366', stroke: '#FFFFFF' },
-  { text: 'OMG! 😱', font: 'Impact, sans-serif', color: '#FACC15', stroke: '#000000' },
-  { text: 'LOL 😂', font: 'Impact, sans-serif', color: '#38BDF8', stroke: '#000000' },
-  { text: 'SUS 👀', font: 'Impact, sans-serif', color: '#EF4444', stroke: '#000000' },
-  { text: 'QUE PRO 😎', font: 'Bangers, cursive, sans-serif', color: '#10B981', stroke: '#000000' },
-  { text: 'WOW! ✨', font: 'Fredoka, cursive, sans-serif', color: '#A855F7', stroke: '#FFFFFF' },
-  { text: '¡HOLA! 👋', font: 'Montserrat, sans-serif', color: '#F97316', stroke: '#FFFFFF' },
-  { text: 'TOP 🚀', font: 'Impact, sans-serif', color: '#EAB308', stroke: '#1E1B4B' },
+  { text: 'LULU ❤️', font: 'Fredoka, cursive, sans-serif', color: '#FF3366', stroke: '#FFFFFF', is3D: true },
+  { text: 'OMG! 😱', font: 'Impact, sans-serif', color: '#FACC15', stroke: '#000000', is3D: true },
+  { text: 'LOL 😂', font: 'Impact, sans-serif', color: '#38BDF8', stroke: '#000000', is3D: true },
+  { text: 'QUE PRO 😎', font: 'Bangers, cursive, sans-serif', color: '#10B981', stroke: '#000000', is3D: true },
+  { text: 'WOW! ✨', font: 'Fredoka, cursive, sans-serif', color: '#A855F7', stroke: '#FFFFFF', is3D: true },
+  { text: 'SUS 👀', font: 'Impact, sans-serif', color: '#EF4444', stroke: '#000000', is3D: true },
+  { text: '¡HOLA! 👋', font: 'Montserrat, sans-serif', color: '#F97316', stroke: '#FFFFFF', is3D: true },
+  { text: 'TOP 🚀', font: 'Impact, sans-serif', color: '#EAB308', stroke: '#1E1B4B', is3D: true },
 ];
 
 export const TextDrawer: React.FC<TextDrawerProps> = ({

@@ -33,6 +33,9 @@ interface HeaderProps {
   onToggleAutoRotate3D: () => void;
   audioTrack?: AudioTrack;
   onOpenGuide?: () => void;
+  isCleanCanvasMode?: boolean;
+  onToggleCleanCanvas?: () => void;
+  onOpenAIStudio?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -52,6 +55,9 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleAutoRotate3D,
   audioTrack,
   onOpenGuide,
+  isCleanCanvasMode,
+  onToggleCleanCanvas,
+  onOpenAIStudio,
 }) => {
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [titleInput, setTitleInput] = React.useState(projectName);
@@ -70,18 +76,18 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className={`w-full px-2.5 sm:px-4 py-2 flex items-center justify-between z-30 transition-colors ${
+      className={`w-full px-2 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between z-30 transition-colors flex-shrink-0 ${
         theme === 'dark' ? 'bg-[#12151C]/95 border-b border-zinc-800/80' : 'bg-white/95 border-b border-zinc-200'
-      } backdrop-blur-md gap-2`}
+      } backdrop-blur-md gap-1 sm:gap-2`}
     >
       {/* Left Section: Brand Logo + Project Controls */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         {/* Brand Logo Badge */}
-        <div className="flex items-center gap-1.5 mr-1 select-none">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-300 flex items-center justify-center text-lg shadow-sm border border-amber-300/50">
+        <div className="flex items-center gap-1 select-none">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-300 flex items-center justify-center text-base sm:text-lg shadow-sm border border-amber-300/50 flex-shrink-0">
             🐱
           </div>
-          <div className="hidden xl:flex flex-col">
+          <div className="hidden lg:flex flex-col">
             <span className="text-xs font-black tracking-tight text-amber-400 leading-none">
               Lulu Emoji
             </span>
@@ -95,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-new-project"
           onClick={onNewEmptyProject}
-          className={`h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-all hover:scale-105 active:scale-95 shadow-sm ${
+          className={`h-7 sm:h-8 px-2 sm:px-3 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-semibold transition-all hover:scale-105 active:scale-95 shadow-sm ${
             theme === 'dark'
               ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/60'
               : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
@@ -110,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-open-projects"
           onClick={onOpenProjects}
-          className={`h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-all hover:scale-105 active:scale-95 shadow-sm ${
+          className={`h-7 sm:h-8 px-2 sm:px-2.5 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-semibold transition-all hover:scale-105 active:scale-95 shadow-sm ${
             theme === 'dark'
               ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/60'
               : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
@@ -125,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-quick-save"
           onClick={onQuickSave}
-          className={`h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-sm ${
+          className={`h-7 sm:h-8 px-2 sm:px-2.5 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-sm ${
             isQuickSaved
               ? 'bg-emerald-500 text-zinc-950'
               : theme === 'dark'
@@ -138,43 +144,17 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="hidden lg:inline">{isQuickSaved ? '¡Guardado!' : 'Guardar'}</span>
         </button>
 
-        {/* Project Name (Editable) */}
-        {isEditingTitle ? (
-          <form onSubmit={handleTitleSubmit} className="flex items-center">
-            <input
-              type="text"
-              autoFocus
-              value={titleInput}
-              onChange={e => setTitleInput(e.target.value)}
-              onBlur={handleTitleSubmit}
-              className={`h-7 text-xs font-semibold px-2 rounded-lg border outline-none max-w-[130px] sm:max-w-[180px] ${
-                theme === 'dark'
-                  ? 'bg-zinc-900 border-amber-400 text-zinc-100'
-                  : 'bg-white border-amber-500 text-zinc-900'
-              }`}
-            />
-          </form>
-        ) : (
+        {/* AI Studio Magic Button */}
+        {onOpenAIStudio && (
           <button
-            onClick={() => setIsEditingTitle(true)}
-            className={`hidden md:flex items-center gap-1.5 h-7 px-2 rounded-lg text-xs font-medium max-w-[150px] truncate transition-colors ${
-              theme === 'dark'
-                ? 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-            }`}
-            title="Haz click para renombrar el proyecto"
+            id="btn-open-ai-studio-header"
+            onClick={onOpenAIStudio}
+            className="h-7 sm:h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-[11px] sm:text-xs font-extrabold transition-all hover:scale-105 active:scale-95 shadow-md bg-gradient-to-r from-amber-400 to-rose-500 hover:from-amber-300 hover:to-rose-400 text-zinc-950 ring-2 ring-amber-400/30"
+            title="Crear personajes y animaciones automáticas con IA (Gemini)"
           >
-            <span className="truncate">{projectName}</span>
-            <Edit2 className="w-3 h-3 text-zinc-500 opacity-60 flex-shrink-0" />
+            <Sparkles className="w-3.5 h-3.5 fill-zinc-950" />
+            <span>🪄 IA Mágica</span>
           </button>
-        )}
-
-        {/* Audio badge if voice is recorded */}
-        {audioTrack && (
-          <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold border border-red-500/30">
-            <Mic className="w-3 h-3 animate-pulse" />
-            <span>Voz ({audioTrack.duration.toFixed(1)}s)</span>
-          </div>
         )}
 
         {/* User Guide Button */}
@@ -182,11 +162,11 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="btn-open-guide-header"
             onClick={onOpenGuide}
-            className="h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-sm bg-amber-400/15 hover:bg-amber-400/25 text-amber-400 border border-amber-400/30"
+            className="h-7 sm:h-8 px-2 sm:px-2.5 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-sm bg-amber-400/15 hover:bg-amber-400/25 text-amber-400 border border-amber-400/30"
             title="Ver Guía de Uso paso a paso"
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Guía</span>
+            <span className="hidden md:inline">Guía</span>
           </button>
         )}
       </div>
@@ -194,14 +174,14 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Center 2D / 3D Segmented Switch */}
       <div
         id="mode-segmented-switch"
-        className={`flex items-center p-0.5 sm:p-1 rounded-full text-xs font-bold border transition-colors shadow-inner ${
+        className={`flex items-center p-0.5 rounded-full text-xs font-bold border transition-colors shadow-inner flex-shrink-0 ${
           theme === 'dark' ? 'bg-[#0A0C10] border-zinc-800' : 'bg-zinc-100 border-zinc-200'
         }`}
       >
         <button
           id="btn-mode-2d"
           onClick={() => onToggleMode('2D')}
-          className={`px-3.5 sm:px-5 py-1 rounded-full transition-all duration-200 font-bold ${
+          className={`px-3 sm:px-4 py-0.5 sm:py-1 rounded-full transition-all duration-200 font-bold text-xs ${
             mode === '2D'
               ? 'bg-amber-400 text-zinc-950 shadow-md scale-100'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -212,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-mode-3d"
           onClick={() => onToggleMode('3D')}
-          className={`px-3.5 sm:px-5 py-1 rounded-full transition-all duration-200 font-bold ${
+          className={`px-3 sm:px-4 py-0.5 sm:py-1 rounded-full transition-all duration-200 font-bold text-xs ${
             mode === '3D'
               ? 'bg-amber-400 text-zinc-950 shadow-md scale-100'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -223,12 +203,12 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right Section: 3D Spin, Theme, Reset, Guardar Video & Export */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         {/* 3D Auto Spin Toggle (visible in 3D mode) */}
         {mode === '3D' && (
           <button
             onClick={onToggleAutoRotate3D}
-            className={`h-8 px-2.5 sm:px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+            className={`h-7 sm:h-8 px-2 sm:px-2.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
               autoRotate3D
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                 : theme === 'dark'
@@ -238,7 +218,26 @@ export const Header: React.FC<HeaderProps> = ({
             title="Auto-rotación 360°"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Giro 360°</span>
+            <span className="hidden sm:inline">360°</span>
+          </button>
+        )}
+
+        {/* Lienzo Limpio (Clean Canvas) Mode Button */}
+        {onToggleCleanCanvas && (
+          <button
+            id="btn-toggle-clean-canvas"
+            onClick={onToggleCleanCanvas}
+            className={`h-7 sm:h-8 px-2 sm:px-2.5 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-sm ${
+              isCleanCanvasMode
+                ? 'bg-amber-400 text-zinc-950 ring-2 ring-amber-400/40'
+                : theme === 'dark'
+                ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60'
+                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
+            }`}
+            title={isCleanCanvasMode ? 'Mostrar todas las herramientas' : 'Ocultar paneles para lienzo limpio'}
+          >
+            <span>{isCleanCanvasMode ? '🖼️' : '🧹'}</span>
+            <span className="hidden xl:inline">{isCleanCanvasMode ? 'Ver Barras' : 'Lienzo Limpio'}</span>
           </button>
         )}
 
@@ -246,12 +245,12 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-reset-canvas"
           onClick={onReset}
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm ${
+          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm ${
             theme === 'dark'
               ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
               : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
           }`}
-          title="Limpiar o reiniciar lienzo"
+          title="Limpiar lienzo"
         >
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
@@ -260,12 +259,12 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-toggle-theme"
           onClick={onToggleTheme}
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm ${
+          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm ${
             theme === 'dark'
               ? 'bg-zinc-800 hover:bg-zinc-700 text-amber-400'
               : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
           }`}
-          title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+          title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
         >
           {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
         </button>
@@ -274,22 +273,11 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           id="btn-save-video"
           onClick={onOpenExport}
-          className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 active:scale-95 text-white font-bold text-xs sm:text-xs shadow-md transition-all ring-2 ring-red-500/20"
+          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 active:scale-95 text-white font-bold text-[11px] sm:text-xs shadow-md transition-all ring-2 ring-red-500/20 whitespace-nowrap"
           title="Guardar Video para YouTube Shorts / TikTok"
         >
           <Video className="w-3.5 h-3.5" />
-          <span className="whitespace-nowrap">Guardar Video</span>
-        </button>
-
-        {/* Export Modal Button */}
-        <button
-          id="btn-export-modal"
-          onClick={onOpenExport}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 active:scale-95 text-zinc-950 font-bold text-xs shadow-md transition-all"
-          title="Exportar como PNG transparente o Video Shorts con Voz"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Export</span>
+          <span>Guardar Video</span>
         </button>
       </div>
     </header>

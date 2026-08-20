@@ -9,6 +9,7 @@ import { BottomDrawer } from './components/BottomDrawer';
 import { ExportModal } from './components/ExportModal';
 import { ProjectsModal } from './components/ProjectsModal';
 import { UserGuideModal } from './components/UserGuideModal';
+import { AIStudioModal } from './components/AIStudioModal';
 import {
   LayerItem,
   KeyframeData,
@@ -34,6 +35,7 @@ export default function App() {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isProjectsOpen, setIsProjectsOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isQuickSaved, setIsQuickSaved] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -47,6 +49,12 @@ export default function App() {
   // Layers State: Start empty as requested ("quiero que todo comience con un proyecto nuevo y vacio")
   const [layers, setLayers] = useState<LayerItem[]>([]);
   const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
+
+  // Collapsible Toolbars & Clean Canvas State
+  const [isCleanCanvasMode, setIsCleanCanvasMode] = useState(false);
+  const [isTimelineCollapsed, setIsTimelineCollapsed] = useState(false);
+  const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false);
+  const [isColorPaletteCollapsed, setIsColorPaletteCollapsed] = useState(false);
 
   // Background State
   const [background, setBackground] = useState<BackgroundConfig | undefined>(undefined);
@@ -375,12 +383,51 @@ export default function App() {
     setIsPlaying(true);
   };
 
+  const handleApplyAICharacter = (data: {
+    projectName: string;
+    backgroundColor: string;
+    layers: LayerItem[];
+    suggestedCaption?: string;
+  }) => {
+    setProjectName(data.projectName || 'Personaje IA');
+    setBackground({ type: 'color', value: data.backgroundColor || '#1E293B' });
+    setLayers(data.layers);
+    setSelectedLayerId(data.layers[0]?.id || null);
+    setKeyframes([]);
+    setCurrentTime(0);
+    setIsPlaying(false);
+
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+
+    setToastMessage(`🪄 ¡Personaje "${data.projectName}" creado con IA!`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleApplyAIKeyframes = (newKeyframes: KeyframeData[], title: string) => {
+    setKeyframes(newKeyframes);
+    setCurrentTime(0);
+    setIsPlaying(true);
+
+    confetti({
+      particleCount: 60,
+      spread: 60,
+      origin: { y: 0.7 },
+    });
+
+    setToastMessage(`🎬 ¡Animación "${title}" lista!`);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   const selectedLayer = layers.find(l => l.id === selectedLayerId) || null;
 
   return (
     <div
       id="app-root-container"
-      className={`min-h-screen w-full flex flex-col font-sans transition-colors duration-300 ${
+      className={`h-[100dvh] max-h-[100dvh] w-full flex flex-col font-sans transition-colors duration-300 overflow-hidden select-none ${
         theme === 'dark' ? 'bg-[#0B0D11] text-zinc-100' : 'bg-slate-100 text-zinc-900'
       }`}
     >
@@ -402,6 +449,7 @@ export default function App() {
         onOpenExport={() => setIsExportOpen(true)}
         onOpenProjects={() => setIsProjectsOpen(true)}
         onOpenGuide={() => setIsGuideOpen(true)}
+        onOpenAIStudio={() => setIsAIModalOpen(true)}
         onNewEmptyProject={handleNewEmptyProject}
         onQuickSave={handleQuickSave}
         isQuickSaved={isQuickSaved}
@@ -412,6 +460,8 @@ export default function App() {
         autoRotate3D={autoRotate3D}
         onToggleAutoRotate3D={() => setAutoRotate3D(r => !r)}
         audioTrack={audioTrack}
+        isCleanCanvasMode={isCleanCanvasMode}
+        onToggleCleanCanvas={() => setIsCleanCanvasMode(c => !c)}
       />
 
       {/* Toast Feedback Notification */}
@@ -423,13 +473,13 @@ export default function App() {
       )}
 
       {/* Main Studio Viewport (Center Stage) */}
-      <main className="flex-1 relative flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+      <main className="flex-1 min-h-0 min-w-0 w-full relative flex items-center justify-center p-1 sm:p-2.5 overflow-hidden">
         {/* Aspect Frame Container */}
         <div
           id="canvas-stage-wrapper"
-          className="relative max-h-[60vh] sm:max-h-[65vh] w-full max-w-md h-full rounded-3xl overflow-hidden shadow-2xl border border-zinc-800/40 flex items-center justify-center"
+          className="relative h-full w-auto max-h-full max-w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-zinc-800/50 flex items-center justify-center mx-auto"
           style={{
-            aspectRatio: aspectRatio === '9:16' ? '9/16' : '1/1',
+            aspectRatio: aspectRatio === '9:16' ? '9 / 16' : '1 / 1',
           }}
         >
           {/* 2D Canvas Engine */}
@@ -462,8 +512,45 @@ export default function App() {
             />
           )}
 
-          {/* Floating Right Controls (Rotar, Escalar, Voltear, Capas, Opacity) */}
-          {mode === '2D' && selectedLayer && (
+          {/* Clean Canvas / Focus Floating Quick Reopen Bar */}
+          {isCleanCanvasMode && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-950/90 border border-zinc-700/80 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <button
+                onClick={() => setIsCleanCanvasMode(false)}
+                className="px-3 py-1 rounded-xl bg-amber-400 text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-transform"
+                title="Restaurar todas las herramientas"
+              >
+                <span>🖼️ Restaurar Barras</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsCleanCanvasMode(false);
+                  setIsTimelineCollapsed(false);
+                }}
+                className="px-2.5 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs flex items-center gap-1 active:scale-95 transition-transform"
+                title="Mostrar Línea de Tiempo"
+              >
+                <span>⏱️</span>
+                <span className="hidden sm:inline">Timeline</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsCleanCanvasMode(false);
+                  setIsDrawerCollapsed(false);
+                }}
+                className="px-2.5 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs flex items-center gap-1 active:scale-95 transition-transform"
+                title="Abrir Galería de Piezas"
+              >
+                <span>🎨</span>
+                <span className="hidden sm:inline">Galería</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Options Toolbar OUTSIDE the Canvas on the Right Side */}
+        {mode === '2D' && selectedLayer && !isCleanCanvasMode && (
+          <aside className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-40 pointer-events-auto">
             <FloatingControls
               selectedLayer={selectedLayer}
               onUpdateLayer={handleUpdateLayer}
@@ -472,51 +559,60 @@ export default function App() {
               onDeleteLayer={handleDeleteLayer}
               theme={theme}
             />
-          )}
-        </div>
+          </aside>
+        )}
       </main>
 
-      {/* Keyframe Timeline Bar */}
-      <TimelineControls
-        isPlaying={isPlaying}
-        onTogglePlay={() => setIsPlaying(p => !p)}
-        isLooping={isLooping}
-        onToggleLoop={() => setIsLooping(l => !l)}
-        currentTime={currentTime}
-        duration={duration}
-        fps={fps}
-        keyframes={keyframes}
-        onSeek={handleSeek}
-        onAddKeyframe={handleAddKeyframe}
-        onDeleteKeyframe={handleDeleteKeyframe}
-        onFpsChange={setFps}
-        onDurationChange={setDuration}
-        aspectRatio={aspectRatio}
-        onAspectRatioChange={setAspectRatio}
-        layers={layers}
-        onApplyPreset={handleApplyPreset}
-        theme={theme}
-      />
+      {/* Keyframe Timeline Bar (Collapsible) */}
+      {!isCleanCanvasMode && !isTimelineCollapsed && (
+        <TimelineControls
+          isPlaying={isPlaying}
+          onTogglePlay={() => setIsPlaying(p => !p)}
+          isLooping={isLooping}
+          onToggleLoop={() => setIsLooping(l => !l)}
+          currentTime={currentTime}
+          duration={duration}
+          fps={fps}
+          keyframes={keyframes}
+          onSeek={handleSeek}
+          onAddKeyframe={handleAddKeyframe}
+          onDeleteKeyframe={handleDeleteKeyframe}
+          onFpsChange={setFps}
+          onDurationChange={setDuration}
+          aspectRatio={aspectRatio}
+          onAspectRatioChange={setAspectRatio}
+          layers={layers}
+          onApplyPreset={handleApplyPreset}
+          theme={theme}
+        />
+      )}
 
-      {/* Color Swatches Palette */}
-      <ColorSwatches
-        selectedColor={activeColor}
-        onSelectColor={handleSelectColor}
-        theme={theme}
-      />
+      {/* Color Swatches Palette (Collapsible) */}
+      {!isCleanCanvasMode && !isColorPaletteCollapsed && (
+        <ColorSwatches
+          selectedColor={activeColor}
+          onSelectColor={handleSelectColor}
+          theme={theme}
+        />
+      )}
 
       {/* Bottom Category Drawer (Bases, Ojos, Bocas, Extras, Formas, Texto, Fondos, Voz) */}
-      <BottomDrawer
-        onAddPiece={handleAddPiece}
-        onAddTextLayer={handleAddTextLayer}
-        background={background}
-        onSelectBackground={setBackground}
-        audioTrack={audioTrack}
-        onSaveAudioTrack={setAudioTrack}
-        timelineDuration={duration}
-        activeColor={activeColor}
-        theme={theme}
-      />
+      {!isCleanCanvasMode && (
+        <BottomDrawer
+          onAddPiece={handleAddPiece}
+          onAddTextLayer={handleAddTextLayer}
+          background={background}
+          onSelectBackground={setBackground}
+          audioTrack={audioTrack}
+          onSaveAudioTrack={setAudioTrack}
+          timelineDuration={duration}
+          activeColor={activeColor}
+          theme={theme}
+          isCollapsed={isDrawerCollapsed}
+          onToggleCollapse={() => setIsDrawerCollapsed(c => !c)}
+          onOpenAIStudio={() => setIsAIModalOpen(true)}
+        />
+      )}
 
       {/* Projects Modal (Save, Load, Templates, Import/Export) */}
       <ProjectsModal
@@ -558,6 +654,19 @@ export default function App() {
       <UserGuideModal
         isOpen={isGuideOpen}
         onClose={() => setIsGuideOpen(false)}
+        theme={theme}
+      />
+
+      {/* AI Studio Magic Modal */}
+      <AIStudioModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        aspectRatio={aspectRatio}
+        currentLayers={layers}
+        duration={duration}
+        fps={fps}
+        onApplyCharacter={handleApplyAICharacter}
+        onApplyKeyframes={handleApplyAIKeyframes}
         theme={theme}
       />
     </div>
