@@ -9,7 +9,7 @@ import { BottomDrawer } from './components/BottomDrawer';
 import { ExportModal } from './components/ExportModal';
 import { ProjectsModal } from './components/ProjectsModal';
 import { UserGuideModal } from './components/UserGuideModal';
-import { AIStudioModal } from './components/AIStudioModal';
+import { MagicStudioModal } from './components/AIStudioModal';
 import {
   LayerItem,
   KeyframeData,
@@ -24,6 +24,12 @@ import {
 import { EMOJI_LIBRARY } from './constants/items';
 import { getInterpolatedLayers } from './utils/animation';
 import { saveProject } from './utils/projectStorage';
+import {
+  generateAnimatedEffectLayers,
+  mergeEffectKeyframes,
+  ANIMATED_EFFECT_PRESETS,
+  EffectType,
+} from './utils/effectsGenerator';
 import confetti from 'canvas-confetti';
 
 export default function App() {
@@ -283,6 +289,39 @@ export default function App() {
 
     setLayers(prev => [...prev, newLayer]);
     setSelectedLayerId(newLayer.id);
+  };
+
+  // Add preconfigured animated visual effects (Stars, Bubbles, Confetti, Sparkles, Hearts, Fire)
+  const handleApplyAnimatedEffect = (effectType: EffectType) => {
+    const result = generateAnimatedEffectLayers(effectType, aspectRatio, layers.length);
+
+    // Merge new layer keyframes with existing keyframes
+    const updatedKeyframes = mergeEffectKeyframes(
+      keyframes,
+      layers,
+      result.layers,
+      result.layerTransformsByTime
+    );
+
+    setLayers(prev => [...prev, ...result.layers]);
+    setKeyframes(updatedKeyframes);
+    setSelectedLayerId(result.layers[0]?.id || null);
+
+    // Subtle celebration feedback
+    try {
+      confetti({
+        particleCount: 20,
+        spread: 45,
+        origin: { y: 0.8 },
+      });
+    } catch {
+      // ignore
+    }
+
+    const presetName =
+      ANIMATED_EFFECT_PRESETS.find(p => p.id === effectType)?.name || 'Efecto Visual';
+    setToastMessage(`✨ ¡${presetName} añadido al lienzo con animación!`);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   // Helper to add default classic yellow face on empty canvas
@@ -601,6 +640,7 @@ export default function App() {
         <BottomDrawer
           onAddPiece={handleAddPiece}
           onAddTextLayer={handleAddTextLayer}
+          onApplyAnimatedEffect={handleApplyAnimatedEffect}
           background={background}
           onSelectBackground={setBackground}
           audioTrack={audioTrack}
@@ -657,8 +697,8 @@ export default function App() {
         theme={theme}
       />
 
-      {/* AI Studio Magic Modal */}
-      <AIStudioModal
+      {/* Magic Studio Modal (100% Offline, no API needed) */}
+      <MagicStudioModal
         isOpen={isAIModalOpen}
         onClose={() => setIsAIModalOpen(false)}
         aspectRatio={aspectRatio}

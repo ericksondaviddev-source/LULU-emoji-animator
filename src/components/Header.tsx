@@ -144,16 +144,16 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="hidden lg:inline">{isQuickSaved ? '¡Guardado!' : 'Guardar'}</span>
         </button>
 
-        {/* AI Studio Magic Button */}
+        {/* Magic Studio Button (100% Offline) */}
         {onOpenAIStudio && (
           <button
-            id="btn-open-ai-studio-header"
+            id="btn-open-magic-studio-header"
             onClick={onOpenAIStudio}
             className="h-7 sm:h-8 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 text-[11px] sm:text-xs font-extrabold transition-all hover:scale-105 active:scale-95 shadow-md bg-gradient-to-r from-amber-400 to-rose-500 hover:from-amber-300 hover:to-rose-400 text-zinc-950 ring-2 ring-amber-400/30"
-            title="Crear personajes y animaciones automáticas con IA (Gemini)"
+            title="Crear personajes y animaciones automáticas instantáneas"
           >
             <Sparkles className="w-3.5 h-3.5 fill-zinc-950" />
-            <span>🪄 IA Mágica</span>
+            <span>🪄 Mágico</span>
           </button>
         )}
 

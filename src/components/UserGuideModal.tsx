@@ -168,9 +168,9 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({ isOpen, onClose,
                     <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 font-black text-xs flex items-center justify-center mb-2">
                       1
                     </div>
-                    <h5 className="font-bold text-xs text-zinc-100">Agrega Formas y Piezas</h5>
+                    <h5 className="font-bold text-xs text-zinc-100">Agrega Formas, Piezas y Efectos</h5>
                     <p className="text-xs text-zinc-400 mt-1">
-                      Usa el panel inferior para elegir <strong>Bases</strong> (caras redondas, gatos, diablitos), <strong>Ojos</strong>, <strong>Bocas</strong>, <strong>Accesorios</strong>, o <strong>Texto</strong>.
+                      Usa el panel inferior para elegir <strong>Bases</strong>, <strong>Ojos</strong>, <strong>Bocas</strong>, <strong>Texto</strong> o la pestaña <strong>Extras</strong> para añadir <strong>Efectos Visuales Animados</strong> (Estrellas, Burbujas, Confeti, Chispas, Corazones).
                     </p>
                   </div>
                 </div>

@@ -5,6 +5,8 @@ import { EMOJI_LIBRARY, UNICODE_EMOJIS } from '../constants/items';
 import { TextDrawer } from './TextDrawer';
 import { BackgroundSelector } from './BackgroundSelector';
 import { VoiceRecorder } from './VoiceRecorder';
+import { AnimatedEffectsTool } from './AnimatedEffectsTool';
+import { EffectType } from '../utils/effectsGenerator';
 
 type DrawerTab = ItemCategory | 'backgrounds' | 'voice';
 
@@ -21,6 +23,7 @@ interface BottomDrawerProps {
     isItalic: boolean;
     hasShadow: boolean;
   }) => void;
+  onApplyAnimatedEffect?: (effectType: EffectType) => void;
   background?: BackgroundConfig;
   onSelectBackground: (bg: BackgroundConfig | undefined) => void;
   audioTrack?: AudioTrack;
@@ -36,6 +39,7 @@ interface BottomDrawerProps {
 export const BottomDrawer: React.FC<BottomDrawerProps> = ({
   onAddPiece,
   onAddTextLayer,
+  onApplyAnimatedEffect,
   background,
   onSelectBackground,
   audioTrack,
@@ -151,6 +155,14 @@ export const BottomDrawer: React.FC<BottomDrawerProps> = ({
           {/* Piece Categories: Bases, Eyes, Mouths, Extras, Shapes */}
           {isEmojiCategory && (
             <div className="flex flex-col gap-1.5">
+              {/* Special Animated Visual Effects Tool in Extras Tab */}
+              {activeTab === 'extras' && onApplyAnimatedEffect && (
+                <AnimatedEffectsTool
+                  onApplyEffect={onApplyAnimatedEffect}
+                  theme={theme}
+                />
+              )}
+
               <div className="flex items-center justify-between gap-2">
                 {/* Search */}
                 <div
@@ -283,13 +295,13 @@ export const BottomDrawer: React.FC<BottomDrawerProps> = ({
           <button
             onClick={onOpenAIStudio}
             className="flex flex-col items-center justify-center py-0.5 px-1 rounded-xl transition-all flex-1 min-w-[48px] hover:scale-105 active:scale-95"
-            title="Crear con Inteligencia Artificial"
+            title="Crear personajes y animaciones automáticas instantáneas"
           >
             <div className="w-8 h-7 sm:w-10 sm:h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-amber-400 to-rose-500 text-zinc-950 font-bold shadow-md ring-1 ring-amber-300">
               <Sparkles className="w-4 h-4 fill-zinc-950" />
             </div>
             <span className="text-[9px] sm:text-[10px] font-extrabold mt-0.5 tracking-tight text-amber-400 truncate max-w-[54px]">
-              IA Mágica
+              Mágico
             </span>
           </button>
         )}
